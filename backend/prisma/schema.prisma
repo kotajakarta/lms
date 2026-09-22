@@ -1,0 +1,505 @@
+// apps/backend/prisma/schema.prisma
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  admin
+  instruktur
+  siswa
+  superadmin
+}
+
+enum MaterialType {
+  pdf
+  video
+  gdrive_video
+  upload_video
+}
+
+enum TugasType {
+  soal
+  pekerjaan
+}
+
+// ----------------------------------------------------
+// 1. ORGANISASI & WILAYAH
+// ----------------------------------------------------
+
+model Wilayah {
+  id           Int       @id @default(autoincrement())
+  nama_wilayah String    @db.VarChar(150)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+
+  cabang Cabang[]
+  users  User[]
+
+  @@map("wilayah")
+}
+
+model Cabang {
+  id          Int       @id @default(autoincrement())
+  nama_cabang String    @db.VarChar(150)
+  wilayah_id  Int
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+
+  wilayah Wilayah @relation(fields: [wilayah_id], references: [id], onDelete: Cascade)
+  users   User[]
+
+  @@index([wilayah_id])
+  @@map("cabang")
+}
+
+model Department {
+  id           Int       @id @default(autoincrement())
+  nama_jurusan String    @db.VarChar(150)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+
+  users              User[]
+  course_departments CourseDepartment[]
+
+  @@map("departments")
+}
+
+// ----------------------------------------------------
+// 2. USERS & AUTENTIKASI
+// ----------------------------------------------------
+
+model User {
+  id                        Int       @id @default(autoincrement())
+  nama                      String    @db.VarChar(100)
+  email                     String    @unique @db.VarChar(100)
+  password                  String    @db.VarChar(255)
+  foto                      String?   @db.VarChar(255)
+  role                      Role      @default(siswa)
+  last_login                DateTime? @db.DateTime(0)
+  last_login_ip             String?   @db.VarChar(45)
+  created_at                DateTime? @default(now()) @db.Timestamp(0)
+  department_id             Int?
+  wilayah_id                Int?
+  cabang_id                 Int?
+  two_factor_secret         String?   @db.VarChar(255)
+  two_factor_enabled        Boolean   @default(false)
+  two_factor_recovery_codes String?   @db.Text
+  reset_token               String?   @db.VarChar(255)
+  reset_token_expires       DateTime? @db.DateTime(0)
+
+  department Department? @relation(fields: [department_id], references: [id], onDelete: SetNull)
+  wilayah    Wilayah?    @relation(fields: [wilayah_id], references: [id], onDelete: SetNull)
+  cabang     Cabang?     @relation(fields: [cabang_id], references: [id], onDelete: SetNull)
+  instruktur_courses       Course[] @relation("InstructorCourses")
+
+  enrollments              Enrollment[]
+  favorite_courses         FavoriteCourse[]
+  material_progress        MaterialProgress[]
+  material_discussions     MaterialDiscussion[]
+  material_discussion_read MaterialDiscussionRead[]
+  topik_diskusi            TopikDiskusi[]
+  balasan_diskusi          BalasanDiskusi[]
+  hasil_tugas              HasilTugas[]
+  tugas_pekerjaan_siswa    TugasPekerjaanSiswa[]
+  two_factor_logs          TwoFactorLog[]
+  password_reset_logs      PasswordResetLog[]
+
+  chat_sent                ChatMessage[]            @relation("ChatSent")
+  chat_received            ChatMessage[]            @relation("ChatReceived")
+  conversations_user1      ChatConversation[]       @relation("ChatUser1")
+  conversations_user2      ChatConversation[]       @relation("ChatUser2")
+
+  @@index([department_id])
+  @@index([wilayah_id])
+  @@index([cabang_id])
+  @@index([reset_token], map: "idx_reset_token")
+  @@index([two_factor_enabled], map: "idx_two_factor_enabled")
+  @@map("users")
+}
+
+model TwoFactorLog {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  action     String   @db.VarChar(50) // enabled, disabled, verified, failed
+  ip_address String   @db.VarChar(45)
+  user_agent String?  @db.Text
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "idx_user_id")
+  @@index([created_at], map: "idx_created_at")
+  @@map("two_factor_logs")
+}
+
+model PasswordResetLog {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  email      String   @db.VarChar(255)
+  action     String   @db.VarChar(50) // requested, used, expired, failed
+  ip_address String   @db.VarChar(45)
+  user_agent String?  @db.Text
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  user User? @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([email], map: "idx_email")
+  @@index([created_at], map: "idx_created_at")
+  @@map("password_reset_logs")
+}
+
+// ----------------------------------------------------
+// 3. KURSUS & ENROLLMENT
+// ----------------------------------------------------
+
+model Course {
+  id                      Int       @id @default(autoincrement())
+  judul                   String    @db.VarChar(255)
+  deskripsi               String?   @db.Text
+  thumbnail               String?   @default("default.jpg") @db.VarChar(255)
+  nama_instruktur         String?   @db.VarChar(255)
+  tanda_tangan_instruktur String?   @db.VarChar(255)
+  nama_headmaster         String?   @db.VarChar(255)
+  tanda_tangan_headmaster String?   @db.VarChar(255)
+  tanggal_mulai_kursus    DateTime? @db.Date
+  tanggal_selesai_kursus  DateTime? @db.Date
+  created_at              DateTime? @default(now()) @db.Timestamp(0)
+  start_date              DateTime? @db.Date
+  end_date                DateTime? @db.Date
+  instruktur_id           Int?
+
+  instruktur         User? @relation("InstructorCourses", fields: [instruktur_id], references: [id], onDelete: SetNull)
+  course_departments CourseDepartment[]
+  enrollments        Enrollment[]
+  favorite_courses   FavoriteCourse[]
+  materials          Material[]
+  soal               Soal[]
+  topik_diskusi      TopikDiskusi[]
+  tugas              Tugas[]
+  jadwal_kursus      JadwalKursus[]
+
+  @@index([instruktur_id])
+
+  @@map("courses")
+}
+
+model CourseDepartment {
+  course_id     Int
+  department_id Int
+
+  course     Course     @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  department Department @relation(fields: [department_id], references: [id], onDelete: Cascade)
+
+  @@id([course_id, department_id])
+  @@index([department_id])
+  @@map("course_departments")
+}
+
+model Enrollment {
+  id            Int       @id @default(autoincrement())
+  user_id       Int?
+  course_id     Int?
+  enrolled_at   DateTime? @default(now()) @db.Timestamp(0)
+  status        String?   @default("active") @db.VarChar(20)
+  progress      Int?      @default(0)
+  last_accessed DateTime? @default(now()) @db.DateTime(0)
+
+  user   User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course Course? @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([course_id])
+  @@map("enrollments")
+}
+
+model FavoriteCourse {
+  user_id    Int
+  course_id  Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, course_id])
+  @@index([course_id])
+  @@map("favorite_courses")
+}
+
+// ----------------------------------------------------
+// 4. MATERI PEMBELAJARAN
+// ----------------------------------------------------
+
+model Material {
+  id               Int          @id @default(autoincrement())
+  course_id        Int
+  judul            String       @db.VarChar(255)
+  deskripsi        String?      @db.Text
+  tipe             MaterialType
+  file_path        String?      @db.VarChar(255)
+  video_url        String?      @db.VarChar(255)
+  duration_minutes Int          @default(0)
+  urutan           Int?         @default(0)
+  created_at       DateTime?    @default(now()) @db.Timestamp(0)
+
+  course                   Course                   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  audio_tracks             MaterialAudioTrack[]
+  material_progress        MaterialProgress[]
+  material_discussions     MaterialDiscussion[]
+  material_discussion_read MaterialDiscussionRead[]
+
+  @@index([course_id])
+  @@map("materials")
+}
+
+model MaterialAudioTrack {
+  id            Int       @id @default(autoincrement())
+  material_id   Int
+  language_code String?   @db.VarChar(16)
+  file_path     String    @db.VarChar(255)
+  mime_type     String?   @db.VarChar(100)
+  created_at    DateTime? @default(now()) @db.Timestamp(0)
+
+  material Material @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@index([material_id])
+  @@map("material_audio_tracks")
+}
+
+model MaterialProgress {
+  user_id      Int
+  material_id  Int
+  completed_at DateTime? @default(now()) @db.Timestamp(0)
+
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  material Material @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, material_id])
+  @@index([material_id])
+  @@map("material_progress")
+}
+
+model MaterialDiscussion {
+  id          Int      @id @default(autoincrement())
+  material_id Int
+  user_id     Int
+  message     String   @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+
+  material Material @relation(fields: [material_id], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([material_id], map: "idx_material")
+  @@index([created_at], map: "idx_created")
+  @@map("material_discussions")
+}
+
+model MaterialDiscussionRead {
+  id                      Int      @id @default(autoincrement())
+  user_id                 Int
+  material_id             Int
+  last_read_discussion_id Int
+  last_read_at            DateTime @default(now()) @updatedAt @db.Timestamp(0)
+
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  material Material @relation(fields: [material_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, material_id], map: "unique_user_material")
+  @@index([material_id])
+  @@index([user_id, material_id], map: "idx_user_material")
+  @@map("material_discussion_reads")
+}
+
+// ----------------------------------------------------
+// 5. FORUM KURSUS
+// ----------------------------------------------------
+
+model TopikDiskusi {
+  id         Int      @id @default(autoincrement())
+  course_id  Int
+  user_id    Int
+  judul      String   @db.VarChar(255)
+  isi        String?  @db.Text
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  course   Course           @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  user     User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  balasan  BalasanDiskusi[]
+
+  @@index([course_id], map: "course_id_2")
+  @@index([user_id])
+  @@map("topik_diskusi")
+}
+
+model BalasanDiskusi {
+  id         Int      @id @default(autoincrement())
+  topic_id   Int
+  user_id    Int
+  isi        String   @db.Text
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  topik TopikDiskusi @relation(fields: [topic_id], references: [id], onDelete: Cascade)
+  user  User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([topic_id])
+  @@map("balasan_diskusi")
+}
+
+// ----------------------------------------------------
+// 6. SOAL, TUGAS & EVALUASI
+// ----------------------------------------------------
+
+model Soal {
+  id            Int      @id @default(autoincrement())
+  course_id     Int
+  pertanyaan    String   @db.Text
+  gambar        String?  @db.VarChar(255)
+  gambar_ukuran String   @default("medium") @db.VarChar(20)
+  created_at    DateTime @default(now()) @db.Timestamp(0)
+
+  course          Course           @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  pilihan_jawaban PilihanJawaban[]
+  tugas_soal      TugasSoal[]
+
+  @@index([course_id])
+  @@map("soal")
+}
+
+model PilihanJawaban {
+  id           Int     @id @default(autoincrement())
+  soal_id      Int
+  pilihan_teks String  @db.Text
+  is_correct   Boolean @default(false)
+
+  soal Soal @relation(fields: [soal_id], references: [id], onDelete: Cascade)
+
+  @@index([soal_id])
+  @@map("pilihan_jawaban")
+}
+
+model Tugas {
+  id            Int       @id @default(autoincrement())
+  course_id     Int
+  judul         String    @db.VarChar(255)
+  instruksi     String?   @db.Text
+  jenis_tugas   TugasType @default(soal)
+  tenggat_waktu DateTime? @db.DateTime(0)
+  created_at    DateTime  @default(now()) @db.Timestamp(0)
+
+  course           Course                @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  tugas_soal       TugasSoal[]
+  hasil_tugas      HasilTugas[]
+  pekerjaan_siswa  TugasPekerjaanSiswa[]
+
+  @@index([course_id])
+  @@map("tugas")
+}
+
+model TugasSoal {
+  tugas_id Int
+  soal_id  Int
+
+  tugas Tugas @relation(fields: [tugas_id], references: [id], onDelete: Cascade)
+  soal  Soal  @relation(fields: [soal_id], references: [id], onDelete: Cascade)
+
+  @@id([tugas_id, soal_id])
+  @@map("tugas_soal")
+}
+
+model HasilTugas {
+  id            Int      @id @default(autoincrement())
+  tugas_id      Int
+  user_id       Int
+  nilai         Decimal  @db.Decimal(5, 2)
+  waktu_selesai DateTime @default(now()) @db.Timestamp(0)
+
+  tugas Tugas @relation(fields: [tugas_id], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([tugas_id, user_id], map: "tugas_user")
+  @@index([tugas_id])
+  @@index([user_id])
+  @@map("hasil_tugas")
+}
+
+model TugasPekerjaanSiswa {
+  id           Int       @id @default(autoincrement())
+  tugas_id     Int
+  user_id      Int
+  is_completed Boolean   @default(false)
+  catatan      String?   @db.Text
+  completed_at DateTime? @db.Timestamp(0)
+
+  tugas Tugas @relation(fields: [tugas_id], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([tugas_id, user_id], map: "unique_submission")
+  @@index([user_id])
+  @@map("tugas_pekerjaan_siswa")
+}
+
+// ----------------------------------------------------
+// 7. JADWAL KURSUS
+// ----------------------------------------------------
+
+model JadwalKursus {
+  id            Int       @id @default(autoincrement())
+  course_id     Int
+  judul         String    @db.VarChar(255)
+  deskripsi     String?   @db.Text
+  tipe          String    @default("acara") @db.VarChar(50) // live_session, webinar, deadline_tugas, acara
+  waktu_mulai   DateTime  @db.DateTime(0)
+  waktu_selesai DateTime? @db.DateTime(0)
+  link_acara    String?   @db.VarChar(255)
+  created_at    DateTime  @default(now()) @db.Timestamp(0)
+
+  course Course @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([course_id])
+  @@map("jadwal_kursus")
+}
+
+// ----------------------------------------------------
+// 8. CHAT 1-ON-1
+// ----------------------------------------------------
+
+model ChatConversation {
+  id              Int      @id @default(autoincrement())
+  user1_id        Int
+  user2_id        Int
+  last_message_id Int?
+  last_message_at DateTime @default(now()) @updatedAt @db.Timestamp(0)
+
+  user1        User         @relation("ChatUser1", fields: [user1_id], references: [id], onDelete: Cascade)
+  user2        User         @relation("ChatUser2", fields: [user2_id], references: [id], onDelete: Cascade)
+  last_message ChatMessage? @relation("LastMessage", fields: [last_message_id], references: [id], onDelete: SetNull)
+
+  @@unique([user1_id, user2_id], map: "unique_conversation")
+  @@index([user2_id])
+  @@index([last_message_id])
+  @@index([last_message_at], map: "idx_last_message")
+  @@map("chat_conversations")
+}
+
+model ChatMessage {
+  id           Int      @id @default(autoincrement())
+  from_user_id Int
+  to_user_id   Int
+  message      String   @db.Text
+  is_read      Boolean  @default(false)
+  created_at   DateTime @default(now()) @db.Timestamp(0)
+
+  from_user User @relation("ChatSent", fields: [from_user_id], references: [id], onDelete: Cascade)
+  to_user   User @relation("ChatReceived", fields: [to_user_id], references: [id], onDelete: Cascade)
+
+  conversations_as_last ChatConversation[] @relation("LastMessage")
+
+  @@index([from_user_id], map: "idx_from_user")
+  @@index([to_user_id], map: "idx_to_user")
+  @@index([created_at], map: "idx_created")
+  @@index([is_read], map: "idx_is_read")
+  @@map("chat_messages")
+}
