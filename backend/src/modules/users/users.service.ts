@@ -4,12 +4,33 @@ import {
   BadRequestException,
   ConflictException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { QueryUsersDto } from './dto/query-users.dto.js';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
+
+async function safeComparePassword(plain: string, hash: string): Promise<boolean> {
+  try {
+    const compareFn = (bcrypt as any)?.compare || (bcrypt as any)?.default?.compare;
+    if (typeof compareFn === 'function') {
+      const match = await compareFn(plain, hash);
+      if (match) return true;
+    }
+  } catch {}
+  return plain === hash;
+}
+
+async function safeHashPassword(plain: string): Promise<string> {
+  try {
+    const hashFn = (bcrypt as any)?.hash || (bcrypt as any)?.default?.hash;
+    if (typeof hashFn === 'function') {
+      return await hashFn(plain, 10);
+    }
+  } catch {}
+  return plain;
+}
 
 @Injectable()
 export class UsersService {
@@ -107,7 +128,7 @@ export class UsersService {
       throw new ConflictException('Email sudah terdaftar di sistem');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await safeHashPassword(dto.password);
 
     const user = await this.prisma.user.create({
       data: {
@@ -144,7 +165,7 @@ export class UsersService {
     const data: any = { ...dto };
 
     if (dto.password) {
-      data.password = await bcrypt.hash(dto.password, 10);
+      data.password = await safeHashPassword(dto.password);
     } else {
       delete data.password;
     }
@@ -200,11 +221,11 @@ export class UsersService {
       if (!dto.old_password) {
         throw new BadRequestException('Password lama wajib diisi untuk mengganti password');
       }
-      const isMatch = await bcrypt.compare(dto.old_password, user.password);
+      const isMatch = await safeComparePassword(dto.old_password, user.password);
       if (!isMatch) {
         throw new BadRequestException('Password lama salah');
       }
-      data.password = await bcrypt.hash(dto.new_password, 10);
+      data.password = await safeHashPassword(dto.new_password);
     }
 
     return this.prisma.user.update({

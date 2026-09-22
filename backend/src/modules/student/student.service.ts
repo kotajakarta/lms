@@ -57,16 +57,16 @@ export class StudentService {
       },
     });
 
-    const courseIds = enrollments.map((item) => item.course_id).filter((id): id is number => id !== null);
-    const allCourseMaterialIds = [...enrollments.flatMap((item) => item.course?.materials.map((material) => material.id) || []), ...publicCourses.flatMap((course) => course.materials.map((material) => material.id))];
-    const materialIds = enrollments.flatMap((item) => item.course?.materials.map((material) => material.id) || []);
+    const courseIds = enrollments.map((item: any) => item.course_id).filter((id: any): id is number => id !== null);
+    const allCourseMaterialIds = [...enrollments.flatMap((item: any) => item.course?.materials.map((material: any) => material.id) || []), ...publicCourses.flatMap((course: any) => course.materials.map((material: any) => material.id))];
+    const materialIds = enrollments.flatMap((item: any) => item.course?.materials.map((material: any) => material.id) || []);
     const completedMaterialRows = allCourseMaterialIds.length ? await this.prisma.materialProgress.findMany({ where: { user_id: userId, material_id: { in: allCourseMaterialIds } }, select: { material_id: true } }) : [];
-    const completedMaterialIds = new Set(completedMaterialRows.map((row) => row.material_id));
+    const completedMaterialIds = new Set(completedMaterialRows.map((row: any) => row.material_id));
     const completedMaterials = materialIds.length
       ? await this.prisma.materialProgress.count({ where: { user_id: userId, material_id: { in: materialIds } } })
       : 0;
 
-    const courses = enrollments.flatMap((enrollment) => {
+    const courses = enrollments.flatMap((enrollment: any) => {
       if (!enrollment.course) return [];
       return [{
         id: enrollment.course.id,
@@ -75,7 +75,7 @@ export class StudentService {
         thumbnail: enrollment.course.thumbnail,
         instructor: enrollment.course.nama_instruktur,
         progress: enrollment.progress || 0,
-        materials: enrollment.course.materials.map((material) => ({
+        materials: enrollment.course.materials.map((material: any) => ({
           id: material.id,
           title: material.judul,
           description: material.deskripsi,
@@ -85,7 +85,7 @@ export class StudentService {
           order: material.urutan || 0,
           completed: completedMaterialIds.has(material.id),
         })),
-        discussions: enrollment.course.topik_diskusi.map((topic) => ({
+        discussions: enrollment.course.topik_diskusi.map((topic: any) => ({
           id: topic.id,
           title: topic.judul,
           content: topic.isi,
@@ -98,20 +98,20 @@ export class StudentService {
       }];
     });
 
-    courses.push(...publicCourses.map((course) => ({
+    courses.push(...publicCourses.map((course: any) => ({
       id: course.id,
       title: course.judul,
       description: course.deskripsi,
       thumbnail: course.thumbnail,
       instructor: course.nama_instruktur,
       progress: 0,
-      materials: course.materials.map((material) => ({ id: material.id, title: material.judul, description: material.deskripsi, type: material.tipe, durationMinutes: material.duration_minutes, url: material.video_url || material.file_path, order: material.urutan || 0, completed: completedMaterialIds.has(material.id) })),
-      discussions: course.topik_diskusi.map((topic) => ({ id: topic.id, title: topic.judul, content: topic.isi, author: topic.user.nama, authorRole: topic.user.role, avatar: topic.user.foto, replyCount: topic._count.balasan, createdAt: topic.created_at })),
+      materials: course.materials.map((material: any) => ({ id: material.id, title: material.judul, description: material.deskripsi, type: material.tipe, durationMinutes: material.duration_minutes, url: material.video_url || material.file_path, order: material.urutan || 0, completed: completedMaterialIds.has(material.id) })),
+      discussions: course.topik_diskusi.map((topic: any) => ({ id: topic.id, title: topic.judul, content: topic.isi, author: topic.user.nama, authorRole: topic.user.role, avatar: topic.user.foto, replyCount: topic._count.balasan, createdAt: topic.created_at })),
     })));
 
-    const events = enrollments.flatMap((enrollment) => {
+    const events = enrollments.flatMap((enrollment: any) => {
       if (!enrollment.course) return [];
-      return enrollment.course.jadwal_kursus.map((event) => ({
+      return enrollment.course.jadwal_kursus.map((event: any) => ({
         id: event.id,
         courseId: event.course_id,
         courseTitle: enrollment.course?.judul,
@@ -122,9 +122,9 @@ export class StudentService {
         end: event.waktu_selesai,
         link: event.link_acara,
       }));
-    }).sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    }).sort((a: any, b: any) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
-    const totalProgress = enrollments.reduce((sum, enrollment) => sum + (enrollment.progress || 0), 0);
+    const totalProgress = enrollments.reduce((sum: number, enrollment: any) => sum + (enrollment.progress || 0), 0);
 
     return {
       user,

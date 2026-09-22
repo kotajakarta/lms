@@ -123,31 +123,31 @@ export const SyllabusDashboardPage: React.FC = () => {
             className="w-full rounded-full border border-stone-200/60 bg-white py-2.5 pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-zinc-400/20"
           />
         </label>
-        <article className="relative overflow-hidden rounded-[28px] bg-[#c2b4df] p-5 text-zinc-900 shadow-sm">
+        <article className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 p-5 text-white shadow-md border border-slate-700/60">
           <div className="relative z-10">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#49435f]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-400">
               Kursus aktif
             </p>
-            <h2 className="mt-2 text-xl font-bold leading-tight">
+            <h2 className="mt-2 text-xl font-bold leading-tight text-white">
               {selectedCourse?.title || "Belum ada kursus"}
             </h2>
-            <p className="mt-1 line-clamp-2 text-xs leading-5 text-zinc-700">
+            <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-300">
               {selectedCourse?.description ||
                 "Kursus yang dibuat admin akan muncul di sini."}
             </p>
           </div>
           <div className="relative z-10 mt-6 flex items-end justify-between">
             <div>
-              <p className="text-[10px] text-zinc-600">Materi</p>
-              <p className="text-2xl font-bold">
+              <p className="text-[10px] text-slate-400">Materi</p>
+              <p className="text-2xl font-bold text-white">
                 {selectedCourse?.materials.length || 0}
               </p>
-              <p className="mt-2 text-[10px] text-zinc-600">Progress</p>
-              <p className="text-2xl font-bold">
+              <p className="mt-2 text-[10px] text-slate-400">Progress</p>
+              <p className="text-2xl font-bold text-white">
                 {selectedCourse?.progress || 0}%
               </p>
             </div>
-            <div className="h-28 w-32 rounded-[28px] border border-white/40 bg-gradient-to-br from-[#615a77] via-[#c9a6cf] to-[#f7d6cd] shadow-lg" />
+            <div className="h-28 w-32 rounded-[28px] border border-white/15 bg-gradient-to-br from-blue-500/25 via-indigo-500/20 to-slate-800/80 shadow-lg" />
           </div>
         </article>
         <div className="flex max-h-[330px] flex-col gap-2.5 overflow-y-auto pr-1">
@@ -155,24 +155,24 @@ export const SyllabusDashboardPage: React.FC = () => {
             <button
               key={course.id}
               onClick={() => selectCourse(course)}
-              className={`flex items-center gap-3 rounded-2xl p-2.5 text-left transition ${selectedCourse?.id === course.id ? "bg-white shadow-sm ring-1 ring-[#1c1d22]/10" : "bg-[#f6f3ed] hover:bg-white"}`}
+              className={`flex items-center gap-3 rounded-2xl p-2.5 text-left transition ${selectedCourse?.id === course.id ? "bg-white shadow-sm ring-1 ring-blue-600/30 border border-blue-100" : "bg-slate-100/80 hover:bg-white border border-transparent"}`}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/80 text-[#615a77]">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
                 <BookOpen size={17} />
               </span>
               <span className="min-w-0 flex-1">
-                <strong className="block truncate text-xs text-zinc-900">
+                <strong className="block truncate text-xs text-slate-900">
                   {course.title}
                 </strong>
-                <small className="block truncate text-[10px] text-zinc-600">
+                <small className="block truncate text-[10px] text-slate-500">
                   {course.materials.length} materi · {course.progress}% progress
                 </small>
               </span>
-              <ChevronRight size={15} className="text-stone-400" />
+              <ChevronRight size={15} className="text-slate-400" />
             </button>
           ))}
           {!visibleCourses.length && (
-            <p className="rounded-2xl bg-white p-5 text-center text-xs text-stone-500">
+            <p className="rounded-2xl bg-white border border-slate-200/80 p-5 text-center text-xs text-slate-500">
               Belum ada kursus.
             </p>
           )}
@@ -181,19 +181,19 @@ export const SyllabusDashboardPage: React.FC = () => {
       <div className="flex min-w-0 flex-1 flex-col gap-4">
         <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-12">
           <section
-            className={`relative flex w-full flex-col overflow-hidden rounded-[32px] bg-[#1c1d22] text-white shadow-md lg:col-span-8 ${selectedMaterial?.type === "pdf" ? "min-h-[620px] md:min-h-[760px]" : "min-h-[420px] md:min-h-[540px]"}`}
+            className={`relative flex w-full flex-col overflow-hidden rounded-[32px] bg-slate-900 border border-slate-800 text-white shadow-md lg:col-span-8 ${selectedMaterial?.type === "pdf" ? "min-h-[620px] md:min-h-[760px]" : "min-h-[420px] md:min-h-[540px]"}`}
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(228,219,254,.55),transparent_28%),linear-gradient(135deg,#1c1d22_10%,#615a77_55%,#dec0bb)] opacity-90" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(59,130,246,.22),transparent_38%),linear-gradient(135deg,#0f172a_10%,#1e293b_55%,#0f172a)] opacity-95" />
             <div className="relative z-10 flex items-start justify-between p-6 pb-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">
                   {selectedCourse?.title || "Learning player"}
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
                   {selectedMaterial?.title ||
                     "Pilih materi untuk mulai belajar"}
                 </h2>
-                <p className="mt-1 text-xs text-white/70">
+                <p className="mt-1 text-xs text-slate-300">
                   {selectedMaterial
                     ? `${selectedMaterial.type} · ${formatDuration(selectedMaterial.durationMinutes)}`
                     : "Data materi berasal dari panel admin"}
@@ -207,12 +207,12 @@ export const SyllabusDashboardPage: React.FC = () => {
                     progressMutation.mutate(!selectedMaterial.completed)
                   }
                   disabled={!selectedMaterial || progressMutation.isPending}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-semibold backdrop-blur transition ${selectedMaterial?.completed ? "bg-[#d5f36d] text-[#365314]" : "bg-white/15 text-white hover:bg-white/25"}`}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-semibold backdrop-blur transition ${selectedMaterial?.completed ? "bg-emerald-500 text-white shadow-sm" : "bg-white/15 text-white hover:bg-white/25 border border-white/20"}`}
                 >
                   <Check size={12} />
                   {selectedMaterial?.completed ? "Selesai" : "Tandai selesai"}
                 </button>
-                <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold backdrop-blur">
+                <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] font-semibold backdrop-blur text-slate-200 border border-white/20">
                   {selectedCourse?.progress || 0}% complete
                 </span>
               </div>
@@ -266,25 +266,25 @@ export const SyllabusDashboardPage: React.FC = () => {
               </span>
             </div>
           </section>
-          <section className="rounded-[32px] bg-[#c8bede] p-5 shadow-sm lg:col-span-4">
+          <section className="rounded-[32px] bg-white border border-slate-200/90 p-5 shadow-sm lg:col-span-4">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-sm font-bold text-zinc-900">
+                <h3 className="text-sm font-bold text-slate-900">
                   Materi kursus
                 </h3>
-                <p className="text-[11px] text-zinc-600">Urutan pembelajaran</p>
+                <p className="text-[11px] text-slate-500">Urutan pembelajaran</p>
               </div>
-              <FileText size={18} className="text-zinc-700" />
+              <FileText size={18} className="text-slate-600" />
             </div>
             <div className="mt-4 flex max-h-[620px] flex-col gap-2 overflow-y-auto pr-1">
               {selectedCourse?.materials.map((material, index) => (
                 <button
                   key={material.id}
                   onClick={() => selectMaterial(material)}
-                  className={`flex items-center justify-between rounded-2xl p-3 text-left transition ${selectedMaterial?.id === material.id ? "border border-white/80 bg-white/80 shadow-sm" : "hover:bg-white/40"}`}
+                  className={`flex items-center justify-between rounded-2xl p-3 text-left transition ${selectedMaterial?.id === material.id ? "border border-blue-200 bg-blue-50/70 text-blue-900 shadow-xs ring-1 ring-blue-500/20" : "hover:bg-slate-50 text-slate-700"}`}
                 >
                   <span className="flex min-w-0 items-center gap-2.5">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/60 text-zinc-800">
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${selectedMaterial?.id === material.id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-700"}`}>
                       {material.type === "pdf" ? (
                         <FileText size={14} />
                       ) : (
@@ -292,29 +292,29 @@ export const SyllabusDashboardPage: React.FC = () => {
                       )}
                     </span>
                     <span className="min-w-0">
-                      <strong className="block truncate text-xs text-zinc-900">
+                      <strong className="block truncate text-xs text-slate-900">
                         {index + 1}. {material.title}
                       </strong>
-                      <small className="block truncate text-[10px] text-zinc-600">
+                      <small className="block truncate text-[10px] text-slate-500">
                         {material.type === "pdf" ? "PDF" : "Video"}
                       </small>
                     </span>
                     {material.completed && (
                       <span
-                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#d5f36d] text-[#365314]"
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white"
                         title="Selesai"
                       >
                         <Check size={12} strokeWidth={3} />
                       </span>
                     )}
                   </span>
-                  <span className="ml-2 shrink-0 text-[10px] font-medium text-zinc-700">
+                  <span className="ml-2 shrink-0 text-[10px] font-medium text-slate-500">
                     {formatDuration(material.durationMinutes)}
                   </span>
                 </button>
               ))}
               {!selectedCourse?.materials.length && (
-                <p className="py-8 text-center text-xs text-zinc-600">
+                <p className="py-8 text-center text-xs text-slate-500">
                   Belum ada materi.
                 </p>
               )}
@@ -322,15 +322,15 @@ export const SyllabusDashboardPage: React.FC = () => {
           </section>
         </div>
         <div className="grid flex-1 grid-cols-1 gap-4">
-          <section className="flex min-h-[300px] flex-col rounded-[32px] border border-stone-200/50 bg-white p-5 shadow-sm lg:col-span-7">
-            <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+          <section className="flex min-h-[300px] flex-col rounded-[32px] border border-slate-200/90 bg-white p-5 shadow-sm lg:col-span-7">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-sm font-bold text-zinc-900">Course Chat</h3>
-                <p className="text-[11px] text-zinc-400">
+                <h3 className="text-sm font-bold text-slate-900">Course Chat</h3>
+                <p className="text-[11px] text-slate-500">
                   {selectedCourse?.discussions.length || 0} recent topics
                 </p>
               </div>
-              <button className="text-stone-500" title="Course discussion">
+              <button className="text-slate-500 hover:text-slate-700" title="Course discussion">
                 <MoreHorizontal size={18} />
               </button>
             </div>
@@ -338,26 +338,26 @@ export const SyllabusDashboardPage: React.FC = () => {
               {selectedCourse?.discussions.map((discussion) => (
                 <div
                   key={discussion.id}
-                  className="rounded-2xl bg-stone-100/90 px-3.5 py-3"
+                  className="rounded-2xl bg-slate-50 border border-slate-100/90 px-3.5 py-3"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <strong className="text-xs text-zinc-800">
+                    <strong className="text-xs text-slate-900">
                       {discussion.title}
                     </strong>
-                    <span className="text-[10px] text-stone-400">
+                    <span className="text-[10px] text-slate-400">
                       {discussion.replyCount} replies
                     </span>
                   </div>
-                  <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-stone-600">
+                  <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-slate-600">
                     {discussion.content}
                   </p>
-                  <p className="mt-2 text-[10px] text-stone-400">
+                  <p className="mt-2 text-[10px] text-slate-400">
                     {discussion.author} · {discussion.authorRole}
                   </p>
                 </div>
               ))}
               {!selectedCourse?.discussions.length && (
-                <p className="py-8 text-center text-xs text-stone-400">
+                <p className="py-8 text-center text-xs text-slate-400">
                   Belum ada diskusi untuk kursus ini.
                 </p>
               )}
@@ -367,17 +367,17 @@ export const SyllabusDashboardPage: React.FC = () => {
                 event.preventDefault();
                 if (chatMessage.trim() && selectedCourse) chatMutation.mutate();
               }}
-              className="flex items-center gap-2 border-t border-stone-100 pt-3"
+              className="flex items-center gap-2 border-t border-slate-100 pt-3"
             >
               <input
                 value={chatMessage}
                 onChange={(event) => setChatMessage(event.target.value)}
                 placeholder="Tulis pesan ke course chat..."
-                className="min-w-0 flex-1 rounded-full bg-stone-100 px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-[#e4dbfe]"
+                className="min-w-0 flex-1 rounded-full bg-slate-50 border border-slate-200/80 px-4 py-2.5 text-xs text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               />
               <button
                 disabled={chatMutation.isPending || !selectedCourse}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1c1d22] text-white disabled:opacity-40"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-40 transition-colors shadow-sm shadow-blue-600/20"
                 title="Kirim pesan"
               >
                 <Send size={14} />

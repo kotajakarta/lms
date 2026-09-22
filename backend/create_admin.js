@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -15,8 +15,8 @@ async function createSuperadmin() {
   console.log('Connecting to database...');
   console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Configured' : 'NOT FOUND');
 
-  const email = 'superadmin@lms.com';
-  const passwordPlain = 'admin123';
+  const email = process.env.ADMIN_EMAIL || 'superadmin@lms.com';
+  const passwordPlain = process.env.ADMIN_PASSWORD || 'admin123';
   const hashedPassword = await bcrypt.hash(passwordPlain, 10);
 
   // Check if superadmin already exists

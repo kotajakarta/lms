@@ -139,7 +139,38 @@ export const LoginPage: React.FC = () => {
             <ArrowRight className="w-4 h-4" />
           </button>
 
-          <div className="relative flex items-center justify-center py-2">
+          <div className="space-y-2 pt-1">
+            <div className="text-center">
+              <span className="text-xs text-slate-400">Pilih kredensial cepat dari .env:</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('superadmin@lms.com');
+                  setPassword('admin123');
+                }}
+                className="py-2 px-3 bg-slate-700/60 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span>Superadmin</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('siswa@lms.com');
+                  setPassword('student123');
+                }}
+                className="py-2 px-3 bg-slate-700/60 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>Siswa Demo</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="relative flex items-center justify-center py-1">
             <div className="border-t border-slate-700 w-full" />
             <span className="bg-slate-800 px-3 text-xs text-slate-400 uppercase tracking-wider absolute">
               atau
@@ -165,7 +196,7 @@ export const LoginPage: React.FC = () => {
             className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-white/10 hover:bg-white/15 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-slate-600 transition cursor-pointer"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <span>Masuk Sebagai Siswa (Demo Anna)</span>
+            <span>Masuk Langsung Sebagai Siswa (Demo Offline)</span>
           </button>
         </form>
       </div>

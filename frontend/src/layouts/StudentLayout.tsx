@@ -6,7 +6,6 @@ import {
   BookOpen,
   User,
   MessageSquare,
-  CreditCard,
   HelpCircle,
   Settings,
   LogOut,
@@ -71,13 +70,13 @@ export const StudentLayout: React.FC = () => {
   ];
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden bg-white flex flex-col xl:flex-row p-3 sm:p-4 lg:p-5 gap-4 lg:gap-5 text-zinc-900 font-sans select-none">
-      {/* Left Dark Sidebar with rounded corners on all sides */}
-      <aside className="w-full xl:w-[220px] 2xl:w-[230px] h-full max-h-full bg-[#161618] text-white rounded-[24px] sm:rounded-[28px] flex flex-col justify-between p-5 sm:p-6 shrink-0 z-20 shadow-xl border border-black/10 overflow-hidden">
+    <div className="h-screen max-h-screen overflow-hidden bg-slate-100 flex flex-col xl:flex-row p-3 sm:p-4 lg:p-5 gap-4 lg:gap-5 text-slate-900 font-sans select-none">
+      {/* Left Dark Enterprise Sidebar with rounded corners on all sides */}
+      <aside className="w-full xl:w-[220px] 2xl:w-[230px] h-full max-h-full bg-slate-900 text-slate-100 rounded-[24px] sm:rounded-[28px] flex flex-col justify-between p-5 sm:p-6 shrink-0 z-20 shadow-xl border border-slate-800 overflow-hidden">
         <div>
-          {/* Logo Skillzone */}
+          {/* Logo Skillzone with Enterprise Cobalt Accent */}
           <div className="flex items-center gap-2.5 mb-8">
-            <div className="w-7 h-7 flex items-center justify-center text-white shrink-0">
+            <div className="w-7 h-7 flex items-center justify-center text-blue-400 shrink-0">
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
@@ -105,20 +104,20 @@ export const StudentLayout: React.FC = () => {
                 to={item.path}
                 className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                   item.isActive
-                    ? "bg-[#252529] text-white"
-                    : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    ? "bg-blue-600 text-white shadow-sm shadow-blue-900/40"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/70"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span
-                    className={item.isActive ? "text-white" : "text-zinc-400"}
+                    className={item.isActive ? "text-white" : "text-slate-400"}
                   >
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
-                  <span className="bg-[#8b5cf6] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                     {item.badge}
                   </span>
                 )}
@@ -128,10 +127,10 @@ export const StudentLayout: React.FC = () => {
         </div>
 
         {/* Bottom Settings and Support */}
-        <div className="pt-6 border-t border-white/10 flex flex-col gap-1 mt-6 xl:mt-0">
+        <div className="pt-6 border-t border-slate-800 flex flex-col gap-1 mt-6 xl:mt-0">
           <button
             type="button"
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all text-left"
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/70 transition-all text-left"
           >
             <HelpCircle size={18} />
             <span>Support</span>
@@ -140,7 +139,7 @@ export const StudentLayout: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all w-full text-left"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/70 transition-all w-full text-left"
             >
               <Settings size={18} />
               <span>Settings</span>
@@ -148,19 +147,19 @@ export const StudentLayout: React.FC = () => {
 
             {/* Profile Menu Popover */}
             {showProfileMenu && (
-              <div className="absolute left-0 bottom-full mb-2 w-52 bg-white rounded-2xl shadow-xl border border-stone-200 p-2 z-50 text-xs text-zinc-800">
-                <div className="px-3 py-2 border-b border-stone-100">
-                  <p className="font-semibold text-zinc-900 truncate">
+              <div className="absolute left-0 bottom-full mb-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 text-xs text-slate-800">
+                <div className="px-3 py-2 border-b border-slate-100">
+                  <p className="font-semibold text-slate-900 truncate">
                     {studentName}
                   </p>
-                  <p className="text-zinc-500 text-[10px] truncate">
+                  <p className="text-slate-500 text-[10px] truncate">
                     {user?.email || "student@lms.com"}
                   </p>
                 </div>
                 <div className="py-1">
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-xl transition font-medium flex items-center gap-1.5"
+                    className="w-full text-left px-3 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl transition font-medium flex items-center gap-1.5"
                   >
                     <LogOut size={14} />
                     Keluar (Logout)
@@ -173,7 +172,7 @@ export const StudentLayout: React.FC = () => {
       </aside>
 
       {/* Content Outlet Area */}
-      <div className="flex-1 h-full max-h-full flex flex-col overflow-y-auto rounded-[24px] sm:rounded-[28px] border border-[#ededf0] bg-white shadow-xs hide-scrollbar">
+      <div className="flex-1 h-full max-h-full flex flex-col overflow-y-auto rounded-[24px] sm:rounded-[28px] border border-slate-200/90 bg-white shadow-xs hide-scrollbar">
         <Outlet />
       </div>
     </div>

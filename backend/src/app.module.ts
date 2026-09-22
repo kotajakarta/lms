@@ -13,7 +13,7 @@ import { CoursesModule } from './modules/courses/courses.module.js';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env', 'backend/.env', '../.env'],
     }),
     PrismaModule,
     AuthModule,

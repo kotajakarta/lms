@@ -55,7 +55,7 @@ export class CoursesService {
   async update(id: number, dto: CreateCourseDto, actor: CourseActor) {
     await this.findById(id, actor);
     const { department_ids, start_date, end_date, ...courseData } = dto;
-    return this.prisma.$transaction(async (transaction) => {
+    return this.prisma.$transaction(async (transaction: any) => {
       if (department_ids) {
         await transaction.courseDepartment.deleteMany({ where: { course_id: id } });
       }
