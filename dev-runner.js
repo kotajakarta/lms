@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { spawn, execSync } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -48,6 +48,16 @@ const maskedDb = process.env.DATABASE_URL
   ? process.env.DATABASE_URL.replace(/:[^:@]+@/, ':***@')
   : 'Default';
 console.log(`📡 Database target: ${maskedDb}`);
+
+const distPath = path.join(process.cwd(), 'backend', 'dist', 'main.js');
+if (!fs.existsSync(distPath)) {
+  console.log('📦 backend/dist/main.js not found. Building backend...');
+  try {
+    execSync('npm run build --workspace=backend', { stdio: 'inherit' });
+  } catch (err) {
+    console.error('❌ Failed to build backend:', err);
+  }
+}
 
 const backend = spawn('node', ['backend/dist/main.js'], {
   cwd: process.cwd(),

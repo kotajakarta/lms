@@ -9,6 +9,7 @@ import { CalendarPage } from './pages/siswa/CalendarPage.js';
 import { DiscussionPage } from './pages/siswa/DiscussionPage.js';
 import { AnalyticsPage } from './pages/siswa/AnalyticsPage.js';
 import { LibraryPage } from './pages/siswa/LibraryPage.js';
+import { ProfilePage } from './pages/siswa/ProfilePage.js';
 import { AdminLayout } from './layouts/AdminLayout.js';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.js';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage.js';
@@ -42,6 +43,7 @@ export const App: React.FC = () => {
               <Route path="/siswa/diskusi" element={<DiscussionPage />} />
               <Route path="/siswa/analitik" element={<AnalyticsPage />} />
               <Route path="/siswa/library" element={<LibraryPage />} />
+              <Route path="/siswa/profile" element={<ProfilePage />} />
             </Route>
           </Route>
 
@@ -54,6 +56,7 @@ export const App: React.FC = () => {
               <Route path="/admin/materials" element={<AdminMaterialsPage />} />
               <Route path="/admin/users" element={<AdminUsersPage />} />
               <Route path="/admin/master-data" element={<AdminMasterDataPage />} />
+              <Route path="/admin/profile" element={<ProfilePage />} />
             </Route>
           </Route>
 

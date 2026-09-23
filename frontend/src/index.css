@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+:root {
+  --color-bg-main: #ffffff;
+  --color-text-main: #1f2937;
+  
+  /* Brand Accent */
+  --color-accent-primary: #0052cc;
+  --color-accent-hover: #0040a3;
+  
+  /* Semantic Accent */
+  --color-semantic-success: #4caf50;
+  --color-semantic-warning: #ff9800;
+  --color-semantic-danger: #f44336;
+  --color-semantic-info: #00bfff;
+}
+
 @theme {
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --color-surface: #fcf9f3;
@@ -24,8 +39,12 @@
   --color-secondary-fixed-dim: #cbc2e4;
   --color-on-secondary-fixed: #1d1831;
   --color-on-secondary-fixed-variant: #49435f;
+  --color-primary-fixed: #e3e2e9;
+  --color-primary-fixed-dim: #c7c6cc;
+  --color-on-primary-fixed: #1a1b20;
   --color-tertiary-fixed: #fbdcd7;
   --color-tertiary-fixed-dim: #dec0bb;
+  --color-on-tertiary-container: #997f7b;
   --color-outline: #77767b;
   --color-outline-variant: #c7c6cb;
   --color-app-canvas: #b8b0cc;
